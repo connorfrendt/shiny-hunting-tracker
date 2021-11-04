@@ -7,10 +7,10 @@
         <div v-show="shinySpriteURL.length > 1">
             <img :src="shinySpriteURL" />
 
-            <div>{{ counter }}</div>
+            <div>{{ pokemons }}</div>
 
-            <button @click="counterUp">+</button>
-            <button @click="counterDown">-</button>
+            <!-- <button @click="counterUp">+</button> -->
+            <!-- <button @click="counterDown">-</button> -->
 
         </div>
     </div>
@@ -22,35 +22,62 @@ export default {
         return {
             pokemonKeyword: '',
             shinySpriteURL: '',
-            counter: 0,
-            pokemons: []
+            // counter: 0,
+            pokemons: [],
+            indexOfSearchedPokemon: null
+            /*
+            [
+                {
+                    name: 'charizard',
+                    counter: 0
+                },
+                {
+                    name: 'salamence',
+                    counter: 0
+                },
+                {
+                    name: 'garchomp',
+                    counter: 0
+                },
+                {
+                    name: 'rayquaza',
+                    counter: 0
+                }
+            ]
+            */
         }
     },
     methods: {
         pokemonAPI() {
-            let chosenPokemon = {
-                counter: 0
-            };
-            return fetch(`https://pokeapi.co/api/v2/pokemon/${this.pokemonKeyword.toLowerCase()}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    chosenPokemon.name = data.name;
-                    console.log(chosenPokemon);
-                    this.shinySpriteURL = data.sprites.front_shiny;
+            // check and see if pokemon already exists
+            this.indexOfSearchedPokemon = this.pokemons.findIndex(ele => ele.name === this.pokemonKeyword);
+            console.log(this.indexOfSearchedPokemon);
+            if(this.pokemons.findIndex(ele => ele.name === this.pokemonKeyword) >= 0) {
+                console.log('Already Exists');
 
-                    this.pokemons.push(chosenPokemon);
-                    console.log(this.pokemons);
-                })
-                .catch(err => console.log(err));
+            } else {
+                //if not, then hit the api
+                let chosenPokemon = {
+                    counter: 0
+                };
+                return fetch(`https://pokeapi.co/api/v2/pokemon/${this.pokemonKeyword.toLowerCase()}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        chosenPokemon.name = data.name;
+                        this.shinySpriteURL = data.sprites.front_shiny;
+                        this.pokemons.push(chosenPokemon);
+                    })
+                    .catch(err => console.log(err));
+
+            }
         }
-        ,
-        counterUp() {
-            return this.counter++;
-        },
-        counterDown() {
-            return this.counter--;
-        }
+        // ,
+        // counterUp() {
+        //     return this.counter++;
+        // },
+        // counterDown() {
+        //     return this.counter--;
+        // }
     }
 }
 </script>
