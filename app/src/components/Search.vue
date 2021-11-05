@@ -7,10 +7,10 @@
         <div v-if="shinySpriteURL.length > 1">
             <img :src="shinySpriteURL" />
 
-            <div>{{ pokemons }}</div>
+            <div>{{ pokemons[indexOfEnteredPokemon].counter }}</div>
 
-            <!-- <button @click="counterUp">+</button> -->
-            <!-- <button @click="counterDown">-</button> -->
+            <button @click="counterUp">+</button>
+            <button @click="counterDown">-</button>
 
         </div>
     </div>
@@ -39,6 +39,7 @@ export default {
                     .then(response => response.json())
                     .then(data => {
                         this.shinySpriteURL = data.sprites.front_shiny;
+                        this.indexOfEnteredPokemon = this.pokemons.findIndex(ele => ele.name === lowerCasePokemonKeywordName);
                     })
             } else {
                 let chosenPokemon = {
@@ -51,17 +52,18 @@ export default {
                         this.shinySpriteURL = data.sprites.front_shiny;
                         this.pokemons.push(chosenPokemon);
                         this.indexOfEnteredPokemon = this.pokemons.findIndex(ele => ele.name === lowerCasePokemonKeywordName);
+                        console.log('COUNTER', this.pokemons[this.indexOfEnteredPokemon].counter);
                     })
                     .catch(err => console.log(err));
             }
         }
-        // ,
-        // counterUp() {
-        //     return this.counter++;
-        // },
-        // counterDown() {
-        //     return this.counter--;
-        // }
+        ,
+        counterUp() {
+            return this.pokemons[this.indexOfEnteredPokemon].counter++;
+        },
+        counterDown() {
+            return this.pokemons[this.indexOfEnteredPokemon].counter--;
+        }
     }
 }
 </script>
