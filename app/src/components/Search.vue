@@ -7,7 +7,7 @@
         <div v-if="shinySpriteURL.length > 1">
             <img :src="shinySpriteURL" />
 
-            <div>{{ pokemons[indexOfEnteredPokemon].counter }}</div>
+            <div>{{ pokemons }}</div>
 
             <!-- <button @click="counterUp">+</button> -->
             <!-- <button @click="counterDown">-</button> -->
@@ -29,33 +29,30 @@ export default {
     },
     methods: {
         pokemonAPI() {
-            this.indexOfSearchedPokemon = this.pokemons.findIndex(ele => ele.name === this.pokemonKeyword);
-            // console.log(this.pokemons[this.indexOfSearchedPokemon].counter);
-            
-            if(this.pokemons.findIndex(ele => ele.name === this.pokemonKeyword) >= 0) {
+            let lowerCasePokemonKeywordName = this.pokemonKeyword.toLowerCase();
+            this.indexOfSearchedPokemon = this.pokemons.findIndex(ele => ele.name === lowerCasePokemonKeywordName);
+            console.log(this.pokemonKeyword, this.indexOfSearchedPokemon);
+            console.log(this.pokemons)
+            if(this.pokemons.findIndex(ele => ele.name === lowerCasePokemonKeywordName) >= 0) {
 
-                console.log('Already Exists', this.pokemons);
-                console.log('Index of Searched Pokemon', this.indexOfSearchedPokemon);
-                console.log('Name?: ', this.pokemons[this.indexOfSearchedPokemon].counter);
-                
+                return fetch(`https://pokeapi.co/api/v2/pokemon/${lowerCasePokemonKeywordName}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.shinySpriteURL = data.sprites.front_shiny;
+                    })
             } else {
                 let chosenPokemon = {
                     counter: 0
                 };
-                return fetch(`https://pokeapi.co/api/v2/pokemon/${this.pokemonKeyword.toLowerCase()}`)
+                return fetch(`https://pokeapi.co/api/v2/pokemon/${lowerCasePokemonKeywordName}`)
                     .then(response => response.json())
                     .then(data => {
                         chosenPokemon.name = data.name;
                         this.shinySpriteURL = data.sprites.front_shiny;
-                        
                         this.pokemons.push(chosenPokemon);
-                        console.log('Chosen Pokemon: ', chosenPokemon, 'Pokemon Array: ', this.pokemons);
-                        this.indexOfEnteredPokemon = this.pokemons.findIndex(ele => ele.name === this.pokemonKeyword);
-                        console.log('Chosen Pokemon Counter: ', chosenPokemon.counter)
-                        console.log('Index of Searched: ', this.indexOfSearchedPokemon, '\nIndex of Entered: ', this.indexOfEnteredPokemon);
+                        this.indexOfEnteredPokemon = this.pokemons.findIndex(ele => ele.name === lowerCasePokemonKeywordName);
                     })
                     .catch(err => console.log(err));
-
             }
         }
         // ,
