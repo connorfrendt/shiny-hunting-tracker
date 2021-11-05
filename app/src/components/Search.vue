@@ -4,10 +4,10 @@
             <input v-model="pokemonKeyword" />
             <button>SEARCH</button>
         </form>
-        <div v-show="shinySpriteURL.length > 1">
+        <div v-if="shinySpriteURL.length > 1">
             <img :src="shinySpriteURL" />
 
-            <div>{{ pokemons }}</div>
+            <div>{{ pokemons[indexOfEnteredPokemon].counter }}</div>
 
             <!-- <button @click="counterUp">+</button> -->
             <!-- <button @click="counterDown">-</button> -->
@@ -22,41 +22,23 @@ export default {
         return {
             pokemonKeyword: '',
             shinySpriteURL: '',
-            // counter: 0,
             pokemons: [],
-            indexOfSearchedPokemon: null
-            /*
-            [
-                {
-                    name: 'charizard',
-                    counter: 0
-                },
-                {
-                    name: 'salamence',
-                    counter: 0
-                },
-                {
-                    name: 'garchomp',
-                    counter: 0
-                },
-                {
-                    name: 'rayquaza',
-                    counter: 0
-                }
-            ]
-            */
+            indexOfSearchedPokemon: null,
+            indexOfEnteredPokemon: null
         }
     },
     methods: {
         pokemonAPI() {
-            // check and see if pokemon already exists
             this.indexOfSearchedPokemon = this.pokemons.findIndex(ele => ele.name === this.pokemonKeyword);
-            console.log(this.indexOfSearchedPokemon);
+            // console.log(this.pokemons[this.indexOfSearchedPokemon].counter);
+            
             if(this.pokemons.findIndex(ele => ele.name === this.pokemonKeyword) >= 0) {
-                console.log('Already Exists');
 
+                console.log('Already Exists', this.pokemons);
+                console.log('Index of Searched Pokemon', this.indexOfSearchedPokemon);
+                console.log('Name?: ', this.pokemons[this.indexOfSearchedPokemon].counter);
+                
             } else {
-                //if not, then hit the api
                 let chosenPokemon = {
                     counter: 0
                 };
@@ -65,7 +47,12 @@ export default {
                     .then(data => {
                         chosenPokemon.name = data.name;
                         this.shinySpriteURL = data.sprites.front_shiny;
+                        
                         this.pokemons.push(chosenPokemon);
+                        console.log('Chosen Pokemon: ', chosenPokemon, 'Pokemon Array: ', this.pokemons);
+                        this.indexOfEnteredPokemon = this.pokemons.findIndex(ele => ele.name === this.pokemonKeyword);
+                        console.log('Chosen Pokemon Counter: ', chosenPokemon.counter)
+                        console.log('Index of Searched: ', this.indexOfSearchedPokemon, '\nIndex of Entered: ', this.indexOfEnteredPokemon);
                     })
                     .catch(err => console.log(err));
 
